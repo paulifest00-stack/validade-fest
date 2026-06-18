@@ -8,9 +8,10 @@ type Props = {
   open: boolean;
   onClose: () => void;
   onDetected: (code: string) => void;
+  title?: string;
 };
 
-export function BarcodeScanner({ open, onClose, onDetected }: Props) {
+export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
   const containerId = "barcode-reader-region";
   const scannerRef = useRef<any>(null);
   const [error, setError] = useState<string | null>(null);
