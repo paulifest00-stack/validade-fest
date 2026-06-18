@@ -8,9 +8,10 @@ type Props = {
   open: boolean;
   onClose: () => void;
   onDetected: (code: string) => void;
+  title?: string;
 };
 
-export function BarcodeScanner({ open, onClose, onDetected }: Props) {
+export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
   const containerId = "barcode-reader-region";
   const scannerRef = useRef<any>(null);
   const [error, setError] = useState<string | null>(null);
@@ -64,7 +65,7 @@ export function BarcodeScanner({ open, onClose, onDetected }: Props) {
       <DialogContent className="max-w-md p-0 overflow-hidden border-border bg-surface">
         <DialogHeader className="px-5 pt-5">
           <DialogTitle className="font-display text-xl">
-            {manualMode ? "Digitar código" : "Escanear código de barras"}
+            {manualMode ? "Digitar código" : (title ?? "Escanear código de barras")}
           </DialogTitle>
         </DialogHeader>
 

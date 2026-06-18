@@ -1,4 +1,4 @@
-export type ExpirationStatus = "danger" | "soon" | "warn" | "ok";
+export type ExpirationStatus = "danger" | "critical" | "soon" | "warn" | "ok";
 
 export function daysUntil(dateStr: string): number {
   const today = new Date();
@@ -9,20 +9,22 @@ export function daysUntil(dateStr: string): number {
 
 export function getStatus(dateStr: string): ExpirationStatus {
   const d = daysUntil(dateStr);
-  if (d < 7) return "danger";
-  if (d <= 14) return "soon";
-  if (d <= 30) return "warn";
-  return "ok";
+  if (d < 0) return "danger";       // vencido
+  if (d < 7) return "critical";     // crítico (laranja marca)
+  if (d <= 14) return "soon";       // vence em breve
+  if (d <= 30) return "warn";       // atenção
+  return "ok";                      // em dia
 }
 
 export const statusMeta: Record<
   ExpirationStatus,
   { label: string; color: string; bg: string; rank: number }
 > = {
-  danger: { label: "Vencido / crítico", color: "var(--status-danger)", bg: "color-mix(in oklab, var(--status-danger) 22%, transparent)", rank: 0 },
-  soon:   { label: "Vence em breve",    color: "var(--status-soon)",   bg: "color-mix(in oklab, var(--status-soon) 22%, transparent)",   rank: 1 },
-  warn:   { label: "Atenção",           color: "var(--status-warn)",   bg: "color-mix(in oklab, var(--status-warn) 22%, transparent)",   rank: 2 },
-  ok:     { label: "Em dia",            color: "var(--status-ok)",     bg: "color-mix(in oklab, var(--status-ok) 22%, transparent)",     rank: 3 },
+  danger:   { label: "Vencido",       color: "var(--status-danger)",   bg: "color-mix(in oklab, var(--status-danger) 14%, transparent)",   rank: 0 },
+  critical: { label: "Crítico",       color: "var(--status-critical)", bg: "color-mix(in oklab, var(--status-critical) 16%, transparent)", rank: 1 },
+  soon:     { label: "Vence em breve", color: "var(--status-soon)",    bg: "color-mix(in oklab, var(--status-soon) 18%, transparent)",    rank: 2 },
+  warn:     { label: "Atenção",       color: "var(--status-warn)",     bg: "color-mix(in oklab, var(--status-warn) 22%, transparent)",    rank: 3 },
+  ok:       { label: "Em dia",        color: "var(--status-ok)",       bg: "color-mix(in oklab, var(--status-ok) 16%, transparent)",      rank: 4 },
 };
 
 export function formatDateBR(dateStr: string): string {
