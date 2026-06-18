@@ -1,11 +1,46 @@
 {
-  "version": 1,
-  "asset_id": "a34c5c5b-f198-4706-b593-8fbb574062ef",
-  "project_id": "90d5dfb8-2572-46b6-bdf9-113026467ab4",
-  "url": "/__l5e/assets-v1/a34c5c5b-f198-4706-b593-8fbb574062ef/paulifest-logo.png",
-  "r2_key": "a/v1/90d5dfb8-2572-46b6-bdf9-113026467ab4/a34c5c5b-f198-4706-b593-8fbb574062ef/paulifest-logo.png",
-  "original_filename": "paulifest-logo.png",
-  "size": 270224,
-  "content_type": "image/png",
-  "created_at": "2026-06-18T23:33:16Z"
+  "logo": {
+    "brand": "Paulifest",
+    "tagline": "Doces e Embalagens",
+    "elements": {
+      "icon": {
+        "shape": "circle",
+        "color": "#F07030",
+        "content": {
+          "letter": "P",
+          "font_style": "bold",
+          "font_family": "rounded/bubbly serif",
+          "color": "#FFFFFF"
+        }
+      },
+      "wordmark": {
+        "text": "aulifest",
+        "font_family": "rounded bubbly sans-serif",
+        "font_style": "bold",
+        "color": "#00AEEF",
+        "case": "lowercase"
+      },
+      "tagline": {
+        "text": "DOCES E EMBALAGENS",
+        "font_family": "sans-serif",
+        "font_weight": "bold",
+        "color": "#1A1A1A",
+        "case": "uppercase",
+        "letter_spacing": "wide"
+      }
+    },
+    "color_palette": {
+      "primary": "#F07030",
+      "secondary": "#00AEEF",
+      "text": "#1A1A1A",
+      "background": "#FFFFFF"
+    },
+    "layout": {
+      "orientation": "horizontal",
+      "icon_position": "left",
+      "icon_overlaps_wordmark": true,
+      "tagline_position": "below_wordmark",
+      "tagline_alignment": "center"
+    }
+  }
 }
