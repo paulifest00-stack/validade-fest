@@ -167,3 +167,11 @@
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
 }
+
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+@utility no-scrollbar-webkit {
+  &::-webkit-scrollbar { display: none; }
+}
