@@ -257,12 +257,6 @@ function Home() {
 
       {/* Bottom action bar */}
       <div className="fixed inset-x-0 bottom-0 z-20 pb-[max(env(safe-area-inset-bottom),1.25rem)] pt-3">
-        <div
-          className="pointer-events-none absolute inset-x-0 -top-6 h-12"
-          style={{
-            background: "linear-gradient(to top, var(--color-background) 60%, transparent)",
-          }}
-        />
         <div className="relative mx-auto flex max-w-2xl items-center justify-end gap-2 px-4">
           <motion.button
             whileTap={{ scale: 0.94 }}
