@@ -159,7 +159,7 @@ export function ProductForm({ open, onClose, initial, categories, defaultCategor
                     <Camera className="h-7 w-7" />
                   </div>
                 )}
-                {lookingUp && (
+                {(lookingUp || visioning) && (
                   <div className="absolute inset-0 grid place-items-center bg-foreground/40">
                     <Loader2 className="h-5 w-5 animate-spin text-background" />
                   </div>
