@@ -143,7 +143,7 @@ export function DateWheel({ value, onChange }: Props) {
   }
 
   return (
-    <div className="relative rounded-2xl border border-border bg-surface-2/40 p-2">
+    <div className="relative rounded-lg border border-border bg-surface-2/40 p-2">
       {/* Selection band */}
       <div
         className="pointer-events-none absolute left-2 right-2 rounded-xl"

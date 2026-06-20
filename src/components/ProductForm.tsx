@@ -151,7 +151,7 @@ export function ProductForm({ open, onClose, initial, categories, defaultCategor
           <div className="space-y-5">
             {/* Photo */}
             <div className="flex items-center gap-4">
-              <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-surface-2 border border-border">
+              <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-surface-2 border border-border">
                 {photo ? (
                   <img src={photo} alt="" className="h-full w-full object-cover" />
                 ) : (
@@ -206,7 +206,7 @@ export function ProductForm({ open, onClose, initial, categories, defaultCategor
             </div>
 
             {notFoundNotice && (
-              <div className="rounded-2xl border border-primary/25 bg-[color-mix(in_oklab,var(--primary)_8%,white)] p-3 text-xs">
+              <div className="rounded-lg border border-primary/25 bg-[color-mix(in_oklab,var(--primary)_8%,white)] p-3 text-xs">
                 <div className="flex items-start gap-2">
                   <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                   <div className="flex-1">
