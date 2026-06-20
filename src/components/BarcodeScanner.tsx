@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Keyboard, X } from "lucide-react";
+import { Keyboard, X, AlertCircle } from "lucide-react";
 
 type Props = {
   open: boolean;
@@ -13,54 +13,135 @@ type Props = {
 
 export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
   const containerId = "barcode-reader-region";
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const scannerRef = useRef<any>(null);
+  const animationFrameRef = useRef<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [manual, setManual] = useState("");
   const [manualMode, setManualMode] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
 
+  // Inicializa o scanner com Quagga2 para melhor precisão em códigos de barras 1D
   useEffect(() => {
     if (!open || manualMode) return;
     let cancelled = false;
 
     (async () => {
       try {
-        const mod = await import("html5-qrcode");
-        const { Html5Qrcode } = mod;
+        // Importação dinâmica para evitar erros no SSR
+        const { default: Quagga } = await import("@ericblade/quagga2");
+
+        if (cancelled) return;
+
         const el = document.getElementById(containerId);
-        if (!el || cancelled) return;
-        const scanner = new Html5Qrcode(containerId, { verbose: false });
-        scannerRef.current = scanner;
-        await scanner.start(
-          { facingMode: "environment" },
+        if (!el) return;
+
+        setIsScanning(true);
+        setError(null);
+
+        // Configuração otimizada do Quagga2 para códigos de barras
+        await Quagga.init(
           {
-            fps: 12,
-            qrbox: (vw: number, vh: number) => {
-              const min = Math.min(vw, vh);
-              const w = Math.floor(min * 0.78);
-              const h = Math.floor(w * 0.62);
-              return { width: w, height: h };
+            inputStream: {
+              name: "Live",
+              type: "LiveStream",
+              target: el,
+              constraints: {
+                width: { min: 640 },
+                height: { min: 480 },
+                facingMode: "environment",
+              },
             },
-            aspectRatio: 4 / 3,
+            decoder: {
+              readers: [
+                "ean_reader",
+                "ean_8_reader",
+                "code_128_reader",
+                "code_39_reader",
+                "code_39_vin_reader",
+                "codabar_reader",
+                "upc_reader",
+                "upc_e_reader",
+                "i2of5_reader",
+              ],
+              debug: {
+                showCanvas: false,
+                showPatternLabels: false,
+                showFrequency: false,
+                showSkeleton: false,
+                showScatter: false,
+                logLevel: 0,
+              },
+            },
+            locator: {
+              halfSample: true,
+              patchSize: "medium",
+            },
+            numOfWorkers: 2,
+            frequency: 10,
           },
-          (decoded) => {
-            onDetected(decoded);
-            stop();
+          (err: any) => {
+            if (err) {
+              console.error("Quagga init error:", err);
+              if (!cancelled) {
+                setError("Não foi possível inicializar a câmera. Tente novamente.");
+                setIsScanning(false);
+              }
+            }
           },
-          () => {},
         );
+
+        if (cancelled) {
+          await Quagga.stop();
+          return;
+        }
+
+        // Listener para detecção bem-sucedida
+        const onDetected = (result: any) => {
+          if (result && result.codeResult && result.codeResult.code) {
+            const code = result.codeResult.code.trim();
+            if (code && code.length > 0) {
+              handleDetected(code);
+            }
+          }
+        };
+
+        Quagga.onDetected(onDetected);
+        scannerRef.current = { Quagga, onDetected };
+
+        Quagga.start();
       } catch (e: any) {
-        setError(
-          "Não foi possível acessar a câmera. Verifique as permissões ou digite o código manualmente.",
-        );
+        console.error("Scanner error:", e);
+        if (!cancelled) {
+          setError(
+            "Câmera indisponível. Digite o código manualmente ou verifique as permissões.",
+          );
+          setIsScanning(false);
+        }
       }
     })();
 
+    const handleDetected = (code: string) => {
+      onDetected(code);
+      stop();
+    };
+
     const stop = async () => {
       try {
-        if (scannerRef.current?.isScanning) await scannerRef.current.stop();
-        await scannerRef.current?.clear();
-      } catch {}
+        if (scannerRef.current?.Quagga) {
+          const { Quagga } = scannerRef.current;
+          if (scannerRef.current.onDetected) {
+            Quagga.offDetected(scannerRef.current.onDetected);
+          }
+          await Quagga.stop();
+        }
+      } catch (e) {
+        console.error("Error stopping scanner:", e);
+      }
       scannerRef.current = null;
+      setIsScanning(false);
     };
 
     return () => {
@@ -82,9 +163,23 @@ export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
           <div className="p-5 pt-3">
             <div className="scanner-frame relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-black">
               <div id={containerId} className="absolute inset-0" />
+              {/* Guia visual para o usuário */}
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div className="w-4/5 h-1/3 border-2 border-green-500 rounded-lg opacity-60" />
+              </div>
+              {/* Indicador de status */}
+              {isScanning && (
+                <div className="absolute top-3 right-3 flex items-center gap-2 bg-green-500/80 text-white px-3 py-1 rounded-full text-xs font-medium">
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+                  Escaneando
+                </div>
+              )}
             </div>
             {error && (
-              <p className="mt-3 text-sm text-destructive">{error}</p>
+              <div className="mt-3 flex items-start gap-2 text-sm text-destructive bg-destructive/10 p-3 rounded-lg">
+                <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                <p>{error}</p>
+              </div>
             )}
             <div className="mt-4 flex gap-2">
               <Button
