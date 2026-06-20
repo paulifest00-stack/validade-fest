@@ -57,7 +57,7 @@
 }
 
 :root {
-  --radius: 1.1rem;
+  --radius: 0.65rem;
 
   /* Warm off-white base */
   --background: #FBF6EE;

@@ -103,82 +103,58 @@ function Home() {
   }
 
   return (
-    <div className="relative z-10 mx-auto min-h-screen w-full max-w-2xl px-4 pb-36 pt-[max(env(safe-area-inset-top),1rem)] sm:pt-10">
-      {/* Header with brand logo */}
-      <header className="mb-6 flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <img
-            src={LOGO_URL}
-            alt="Paulifest — Doces e Embalagens"
-            className="h-12 w-auto max-w-full sm:h-14 select-none object-contain object-left"
-            draggable={false}
-          />
-
-          <h1 className="mt-3 font-display text-2xl font-bold leading-none tracking-tight sm:text-3xl">
-            Validade<span className="text-primary">.</span>
-          </h1>
-          <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-            Confeitaria, festas e doces — sempre dentro do prazo.
-          </p>
-        </div>
+    <div className="relative z-10 mx-auto min-h-screen w-full max-w-2xl px-4 pb-36 pt-[max(env(safe-area-inset-top),0.75rem)] sm:pt-6">
+      {/* Header: compact — logo + settings only */}
+      <header className="mb-3 flex items-center justify-between gap-3">
+        <img
+          src={LOGO_URL}
+          alt="Paulifest"
+          className="h-9 w-auto max-w-[60%] select-none object-contain object-left"
+          draggable={false}
+        />
         <button
           onClick={() => setCatOpen(true)}
-          className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-border bg-surface text-muted-foreground shadow-[var(--shadow-press)] transition active:scale-95 hover:text-foreground"
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-border bg-surface text-muted-foreground shadow-[var(--shadow-press)] transition active:scale-95 hover:text-foreground"
           aria-label="Categorias"
         >
-          <Settings2 className="h-5 w-5" />
+          <Settings2 className="h-4.5 w-4.5" />
         </button>
       </header>
 
-      {/* Dashboard hero: circular gauge + summary */}
-      <DashboardHero
-        total={(products.data ?? []).length}
-        ok={counts.ok}
-        urgent={counts.urgent}
-        soonish={counts.soon + counts.warn}
-      />
-
-      {/* Status cards */}
-      <section className="mb-4 grid grid-cols-3 gap-2">
+      {/* Compact stat row */}
+      <section className="mb-3 grid grid-cols-3 gap-2">
         <StatCard
           label="Vencidos"
           value={counts.danger}
           color="var(--status-danger)"
-          icon={<AlertTriangle className="h-4 w-4" />}
+          icon={<AlertTriangle className="h-3.5 w-3.5" />}
         />
         <StatCard
           label="Próximos"
           value={counts.critical + counts.soon + counts.warn}
           color="var(--status-critical)"
-          icon={<Clock className="h-4 w-4" />}
+          icon={<Clock className="h-3.5 w-3.5" />}
         />
         <StatCard
           label="Em dia"
           value={counts.ok}
           color="var(--status-ok)"
-          icon={<CheckCircle2 className="h-4 w-4" />}
+          icon={<CheckCircle2 className="h-3.5 w-3.5" />}
         />
       </section>
 
-      {/* Alert banner */}
+      {/* Alert banner — slim */}
       <AnimatePresence>
         {counts.urgent > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
+            initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="mb-4 flex items-center gap-3 rounded-2xl border border-primary/30 bg-gradient-to-r from-[color-mix(in_oklab,var(--primary)_18%,white)] to-[color-mix(in_oklab,var(--status-danger)_14%,white)] px-4 py-3 shadow-[var(--shadow-soft)]"
+            className="mb-3 flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 text-sm"
           >
-            <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary/20 text-primary">
-              <AlertTriangle className="h-4 w-4" />
-            </div>
-            <div className="flex-1 text-sm">
-              <div className="font-display font-semibold text-foreground">
-                {counts.urgent} produto{counts.urgent === 1 ? "" : "s"} vencendo / vencido{counts.urgent === 1 ? "" : "s"}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Verifique os itens em destaque abaixo.
-              </div>
+            <AlertTriangle className="h-4 w-4 shrink-0 text-primary" />
+            <div className="font-display font-semibold text-foreground">
+              {counts.urgent} produto{counts.urgent === 1 ? "" : "s"} vencendo / vencido{counts.urgent === 1 ? "" : "s"}
             </div>
           </motion.div>
         )}
