@@ -103,82 +103,58 @@ function Home() {
   }
 
   return (
-    <div className="relative z-10 mx-auto min-h-screen w-full max-w-2xl px-4 pb-36 pt-[max(env(safe-area-inset-top),1rem)] sm:pt-10">
-      {/* Header with brand logo */}
-      <header className="mb-6 flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <img
-            src={LOGO_URL}
-            alt="Paulifest — Doces e Embalagens"
-            className="h-12 w-auto max-w-full sm:h-14 select-none object-contain object-left"
-            draggable={false}
-          />
-
-          <h1 className="mt-3 font-display text-2xl font-bold leading-none tracking-tight sm:text-3xl">
-            Validade<span className="text-primary">.</span>
-          </h1>
-          <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-            Confeitaria, festas e doces — sempre dentro do prazo.
-          </p>
-        </div>
+    <div className="relative z-10 mx-auto min-h-screen w-full max-w-2xl px-4 pb-36 pt-[max(env(safe-area-inset-top),0.75rem)] sm:pt-6">
+      {/* Header: compact — logo + settings only */}
+      <header className="mb-3 flex items-center justify-between gap-3">
+        <img
+          src={LOGO_URL}
+          alt="Paulifest"
+          className="h-9 w-auto max-w-[60%] select-none object-contain object-left"
+          draggable={false}
+        />
         <button
           onClick={() => setCatOpen(true)}
-          className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-border bg-surface text-muted-foreground shadow-[var(--shadow-press)] transition active:scale-95 hover:text-foreground"
+          className="grid h-10 w-10 shrink-0 place-items-center rounded-lg border border-border bg-surface text-muted-foreground shadow-[var(--shadow-press)] transition active:scale-95 hover:text-foreground"
           aria-label="Categorias"
         >
-          <Settings2 className="h-5 w-5" />
+          <Settings2 className="h-4.5 w-4.5" />
         </button>
       </header>
 
-      {/* Dashboard hero: circular gauge + summary */}
-      <DashboardHero
-        total={(products.data ?? []).length}
-        ok={counts.ok}
-        urgent={counts.urgent}
-        soonish={counts.soon + counts.warn}
-      />
-
-      {/* Status cards */}
-      <section className="mb-4 grid grid-cols-3 gap-2">
+      {/* Compact stat row */}
+      <section className="mb-3 grid grid-cols-3 gap-2">
         <StatCard
           label="Vencidos"
           value={counts.danger}
           color="var(--status-danger)"
-          icon={<AlertTriangle className="h-4 w-4" />}
+          icon={<AlertTriangle className="h-3.5 w-3.5" />}
         />
         <StatCard
           label="Próximos"
           value={counts.critical + counts.soon + counts.warn}
           color="var(--status-critical)"
-          icon={<Clock className="h-4 w-4" />}
+          icon={<Clock className="h-3.5 w-3.5" />}
         />
         <StatCard
           label="Em dia"
           value={counts.ok}
           color="var(--status-ok)"
-          icon={<CheckCircle2 className="h-4 w-4" />}
+          icon={<CheckCircle2 className="h-3.5 w-3.5" />}
         />
       </section>
 
-      {/* Alert banner */}
+      {/* Alert banner — slim */}
       <AnimatePresence>
         {counts.urgent > 0 && (
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
+            initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
-            className="mb-4 flex items-center gap-3 rounded-2xl border border-primary/30 bg-gradient-to-r from-[color-mix(in_oklab,var(--primary)_18%,white)] to-[color-mix(in_oklab,var(--status-danger)_14%,white)] px-4 py-3 shadow-[var(--shadow-soft)]"
+            className="mb-3 flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 text-sm"
           >
-            <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary/20 text-primary">
-              <AlertTriangle className="h-4 w-4" />
-            </div>
-            <div className="flex-1 text-sm">
-              <div className="font-display font-semibold text-foreground">
-                {counts.urgent} produto{counts.urgent === 1 ? "" : "s"} vencendo / vencido{counts.urgent === 1 ? "" : "s"}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                Verifique os itens em destaque abaixo.
-              </div>
+            <AlertTriangle className="h-4 w-4 shrink-0 text-primary" />
+            <div className="font-display font-semibold text-foreground">
+              {counts.urgent} produto{counts.urgent === 1 ? "" : "s"} vencendo / vencido{counts.urgent === 1 ? "" : "s"}
             </div>
           </motion.div>
         )}
@@ -186,19 +162,19 @@ function Home() {
 
       {/* Search + scanner */}
       <div className="relative mb-3">
-        <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar por nome ou código"
-          className="h-13 rounded-2xl border-border bg-surface pl-11 pr-24 text-base shadow-[var(--shadow-press)] focus-visible:ring-2 focus-visible:ring-primary"
-          style={{ height: 52 }}
+          className="rounded-lg border-border bg-surface pl-10 pr-20 text-base shadow-[var(--shadow-press)] focus-visible:ring-2 focus-visible:ring-primary"
+          style={{ height: 44 }}
         />
-        <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
+        <div className="absolute right-1 top-1/2 flex -translate-y-1/2 items-center gap-1">
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="grid h-9 w-9 place-items-center rounded-xl text-muted-foreground transition active:scale-95 hover:text-foreground"
+              className="grid h-8 w-8 place-items-center rounded-md text-muted-foreground transition active:scale-95 hover:text-foreground"
               aria-label="Limpar busca"
             >
               <X className="h-4 w-4" />
@@ -206,16 +182,16 @@ function Home() {
           )}
           <button
             onClick={() => setScanIntent("search")}
-            className="grid h-10 w-10 place-items-center rounded-xl bg-primary text-primary-foreground shadow-[var(--shadow-glow)] transition active:scale-95 hover:bg-[var(--primary-hover)]"
+            className="grid h-9 w-9 place-items-center rounded-md bg-primary text-primary-foreground shadow-[var(--shadow-glow)] transition active:scale-95 hover:bg-[var(--primary-hover)]"
             aria-label="Escanear código para buscar"
           >
-            <ScanLine className="h-5 w-5" />
+            <ScanLine className="h-4.5 w-4.5" />
           </button>
         </div>
       </div>
 
       {/* Category chips */}
-      <div className="-mx-4 mb-4 overflow-x-auto px-4 no-scrollbar">
+      <div className="-mx-4 mb-3 overflow-x-auto px-4 no-scrollbar">
         <div className="flex gap-2 pb-1">
           <CategoryChip
             label="Todos"
@@ -237,7 +213,7 @@ function Home() {
       {products.isLoading ? (
         <div className="space-y-3">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-3xl bg-surface" />
+            <div key={i} className="h-24 animate-pulse rounded-lg bg-surface" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
@@ -262,7 +238,8 @@ function Home() {
           <motion.button
             whileTap={{ scale: 0.94 }}
             onClick={() => openNew()}
-            className="grid h-14 w-14 place-items-center rounded-2xl border border-border bg-surface text-foreground shadow-[var(--shadow-card)] transition active:bg-surface-2"
+            className="grid h-13 w-13 place-items-center rounded-lg border border-border bg-surface text-foreground shadow-[var(--shadow-card)] transition active:bg-surface-2"
+            style={{ height: 52, width: 52 }}
             aria-label="Adicionar manualmente"
           >
             <Plus className="h-5 w-5" />
@@ -270,7 +247,8 @@ function Home() {
           <motion.button
             whileTap={{ scale: 0.96 }}
             onClick={() => setScanIntent("add")}
-            className="group flex h-14 items-center gap-2 rounded-2xl bg-primary px-6 font-display text-base font-semibold text-primary-foreground shadow-[var(--shadow-glow)] transition hover:bg-[var(--primary-hover)]"
+            className="group flex items-center gap-2 rounded-lg bg-primary px-5 font-display text-base font-semibold text-primary-foreground shadow-[var(--shadow-glow)] transition hover:bg-[var(--primary-hover)]"
+            style={{ height: 52 }}
           >
             <ScanLine className="h-5 w-5" />
             Escanear / Adicionar
@@ -304,16 +282,16 @@ function StatCard({
   label, value, color, icon,
 }: { label: string; value: number; color: string; icon: React.ReactNode }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-border bg-surface p-3 shadow-[var(--shadow-press)]">
+    <div className="relative overflow-hidden rounded-lg border border-border bg-surface px-3 py-2 shadow-[var(--shadow-press)]">
       <div
-        className="absolute -right-4 -top-4 h-16 w-16 rounded-full blur-2xl opacity-40"
+        className="absolute -right-3 -top-3 h-12 w-12 rounded-full blur-2xl opacity-40"
         style={{ background: color }}
       />
       <div className="relative">
-        <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+        <div className="flex items-center gap-1.5 text-[11px] font-medium text-muted-foreground">
           <span style={{ color }}>{icon}</span> {label}
         </div>
-        <div className="mt-1 font-display text-2xl font-bold" style={{ color }}>
+        <div className="mt-0.5 font-display text-xl font-bold leading-tight" style={{ color }}>
           {value}
         </div>
       </div>
@@ -340,16 +318,16 @@ function CategoryChip({
 
 function EmptyState({ onAdd }: { onAdd: () => void }) {
   return (
-    <div className="mt-8 rounded-3xl border border-dashed border-border bg-surface/60 p-8 text-center">
-      <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-primary/15 text-primary">
-        <ScanLine className="h-6 w-6" />
+    <div className="mt-6 rounded-xl border border-dashed border-border bg-surface/60 p-6 text-center">
+      <div className="mx-auto grid h-12 w-12 place-items-center rounded-lg bg-primary/15 text-primary">
+        <ScanLine className="h-5 w-5" />
       </div>
-      <h3 className="mt-3 font-display text-lg font-semibold">Nenhum produto cadastrado</h3>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <h3 className="mt-3 font-display text-base font-semibold">Nenhum produto cadastrado</h3>
+      <p className="mt-1 text-xs text-muted-foreground">
         Escaneie um código de barras ou adicione manualmente para começar.
       </p>
       <Button
-        className="mt-4 h-12 rounded-xl bg-primary text-primary-foreground hover:bg-[var(--primary-hover)]"
+        className="mt-3 h-11 rounded-lg bg-primary text-primary-foreground hover:bg-[var(--primary-hover)]"
         onClick={onAdd}
       >
         <Plus className="mr-2 h-4 w-4" /> Adicionar produto

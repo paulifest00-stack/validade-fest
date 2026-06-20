@@ -21,14 +21,14 @@ export function ProductCard({ product, category, onEdit, onDelete }: Props) {
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -2 }}
       transition={{ type: "spring", stiffness: 280, damping: 24 }}
-      className="group relative overflow-hidden rounded-3xl border border-border bg-card shadow-[var(--shadow-card)]"
+      className="group relative overflow-hidden rounded-xl border border-border bg-card shadow-[var(--shadow-card)]"
     >
       <div
         className="absolute left-0 top-0 h-full w-1.5"
         style={{ background: meta.color }}
       />
       <div className="flex gap-3 p-3 pl-4">
-        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-surface-2">
+        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-surface-2">
           {product.photo_url ? (
             <img src={product.photo_url} alt={product.name} className="h-full w-full object-cover" />
           ) : (

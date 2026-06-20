@@ -80,7 +80,7 @@ export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
 
         {!manualMode ? (
           <div className="p-5 pt-3">
-            <div className="scanner-frame relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-black">
+            <div className="scanner-frame relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-black">
               <div id={containerId} className="absolute inset-0" />
             </div>
             {error && (

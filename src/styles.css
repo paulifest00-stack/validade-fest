@@ -57,7 +57,7 @@
 }
 
 :root {
-  --radius: 1.1rem;
+  --radius: 0.65rem;
 
   /* Warm off-white base */
   --background: #FBF6EE;
@@ -140,7 +140,7 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.45rem 0.9rem;
-  border-radius: 999px;
+  border-radius: 0.5rem;
   font-size: 0.78rem;
   font-weight: 600;
   white-space: nowrap;
