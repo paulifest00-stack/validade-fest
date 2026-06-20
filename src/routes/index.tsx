@@ -130,7 +130,15 @@ function Home() {
         </button>
       </header>
 
-      {/* Summary */}
+      {/* Dashboard hero: circular gauge + summary */}
+      <DashboardHero
+        total={(products.data ?? []).length}
+        ok={counts.ok}
+        urgent={counts.urgent}
+        soonish={counts.soon + counts.warn}
+      />
+
+      {/* Status cards */}
       <section className="mb-4 grid grid-cols-3 gap-2">
         <StatCard
           label="Vencidos"
