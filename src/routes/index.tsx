@@ -162,19 +162,19 @@ function Home() {
 
       {/* Search + scanner */}
       <div className="relative mb-3">
-        <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Buscar por nome ou código"
-          className="h-13 rounded-2xl border-border bg-surface pl-11 pr-24 text-base shadow-[var(--shadow-press)] focus-visible:ring-2 focus-visible:ring-primary"
-          style={{ height: 52 }}
+          className="rounded-lg border-border bg-surface pl-10 pr-20 text-base shadow-[var(--shadow-press)] focus-visible:ring-2 focus-visible:ring-primary"
+          style={{ height: 44 }}
         />
-        <div className="absolute right-1.5 top-1/2 flex -translate-y-1/2 items-center gap-1">
+        <div className="absolute right-1 top-1/2 flex -translate-y-1/2 items-center gap-1">
           {search && (
             <button
               onClick={() => setSearch("")}
-              className="grid h-9 w-9 place-items-center rounded-xl text-muted-foreground transition active:scale-95 hover:text-foreground"
+              className="grid h-8 w-8 place-items-center rounded-md text-muted-foreground transition active:scale-95 hover:text-foreground"
               aria-label="Limpar busca"
             >
               <X className="h-4 w-4" />
@@ -182,16 +182,16 @@ function Home() {
           )}
           <button
             onClick={() => setScanIntent("search")}
-            className="grid h-10 w-10 place-items-center rounded-xl bg-primary text-primary-foreground shadow-[var(--shadow-glow)] transition active:scale-95 hover:bg-[var(--primary-hover)]"
+            className="grid h-9 w-9 place-items-center rounded-md bg-primary text-primary-foreground shadow-[var(--shadow-glow)] transition active:scale-95 hover:bg-[var(--primary-hover)]"
             aria-label="Escanear código para buscar"
           >
-            <ScanLine className="h-5 w-5" />
+            <ScanLine className="h-4.5 w-4.5" />
           </button>
         </div>
       </div>
 
       {/* Category chips */}
-      <div className="-mx-4 mb-4 overflow-x-auto px-4 no-scrollbar">
+      <div className="-mx-4 mb-3 overflow-x-auto px-4 no-scrollbar">
         <div className="flex gap-2 pb-1">
           <CategoryChip
             label="Todos"
@@ -213,7 +213,7 @@ function Home() {
       {products.isLoading ? (
         <div className="space-y-3">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-28 animate-pulse rounded-3xl bg-surface" />
+            <div key={i} className="h-24 animate-pulse rounded-lg bg-surface" />
           ))}
         </div>
       ) : filtered.length === 0 ? (
