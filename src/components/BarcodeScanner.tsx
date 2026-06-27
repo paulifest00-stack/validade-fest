@@ -35,6 +35,8 @@ export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
   const streamRef = useRef<MediaStream | null>(null);
   const scannerRef = useRef<any>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const votesRef = useRef<Map<string, number>>(new Map());
+  const acceptedRef = useRef<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [manual, setManual] = useState("");
   const [manualMode, setManualMode] = useState(false);
@@ -44,6 +46,8 @@ export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
   useEffect(() => {
     if (!open || manualMode) return;
     let cancelled = false;
+    votesRef.current = new Map();
+    acceptedRef.current = false;
 
     (async () => {
       try {
@@ -66,23 +70,25 @@ export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
               type: "LiveStream",
               target: el,
               constraints: {
-                width: { min: 640 },
-                height: { min: 480 },
+                width: { min: 1280, ideal: 1920 },
+                height: { min: 720, ideal: 1080 },
                 facingMode: "environment",
-              },
+                // @ts-ignore - advanced constraints
+                advanced: [{ focusMode: "continuous" }],
+              } as any,
             },
             decoder: {
               readers: [
                 "ean_reader",
                 "ean_8_reader",
-                "code_128_reader",
-                "code_39_reader",
-                "code_39_vin_reader",
-                "codabar_reader",
                 "upc_reader",
                 "upc_e_reader",
+                "code_128_reader",
+                "code_39_reader",
+                "codabar_reader",
                 "i2of5_reader",
               ],
+              multiple: false,
               debug: {
                 showCanvas: false,
                 showPatternLabels: false,
@@ -93,11 +99,13 @@ export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
               },
             },
             locator: {
-              halfSample: true,
-              patchSize: "medium",
+              halfSample: false,
+              patchSize: "large",
             },
-            numOfWorkers: 2,
-            frequency: 10,
+            numOfWorkers: navigator.hardwareConcurrency
+              ? Math.min(4, navigator.hardwareConcurrency)
+              : 2,
+            frequency: 15,
           },
           (err: any) => {
             if (err) {
@@ -115,18 +123,39 @@ export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
           return;
         }
 
-        // Listener para detecção bem-sucedida
-        const onDetected = (result: any) => {
-          if (result && result.codeResult && result.codeResult.code) {
-            const code = result.codeResult.code.trim();
-            if (code && code.length > 0) {
-              handleDetected(code);
-            }
+        // Listener com votação: exige N leituras consistentes + checksum válido
+        const REQUIRED_VOTES = 3;
+        const MAX_ERROR = 0.15;
+        const onDetectedHandler = (result: any) => {
+          if (acceptedRef.current) return;
+          const cr = result?.codeResult;
+          const code: string | undefined = cr?.code?.trim();
+          if (!code) return;
+
+          // Filtra leituras com baixa qualidade (erro médio alto por dígito)
+          const decoded: any[] = cr.decodedCodes ?? [];
+          const errs = decoded
+            .map((d) => (typeof d.error === "number" ? d.error : null))
+            .filter((v): v is number => v !== null);
+          const avgErr = errs.length
+            ? errs.reduce((a, b) => a + b, 0) / errs.length
+            : 0;
+          if (avgErr > MAX_ERROR) return;
+
+          // Checksum (EAN/UPC)
+          if (!isValidBarcodeChecksum(code)) return;
+
+          const next = (votesRef.current.get(code) ?? 0) + 1;
+          votesRef.current.set(code, next);
+
+          if (next >= REQUIRED_VOTES) {
+            acceptedRef.current = true;
+            handleDetected(code);
           }
         };
 
-        Quagga.onDetected(onDetected);
-        scannerRef.current = { Quagga, onDetected };
+        Quagga.onDetected(onDetectedHandler);
+        scannerRef.current = { Quagga, onDetected: onDetectedHandler };
 
         Quagga.start();
       } catch (e: any) {
@@ -141,9 +170,16 @@ export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
     })();
 
     const handleDetected = (code: string) => {
+      // feedback tátil quando disponível
+      try {
+        navigator.vibrate?.(60);
+      } catch {
+        /* no-op */
+      }
       onDetected(code);
       stop();
     };
+
 
     const stop = async () => {
       try {
