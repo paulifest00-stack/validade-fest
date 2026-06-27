@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Keyboard, X, AlertCircle } from "lucide-react";
+import { Keyboard, X, AlertCircle, Zap } from "lucide-react";
 
 // Valida checksum de EAN-13, EAN-8 e UPC-A (12 dígitos).
 function isValidBarcodeChecksum(code: string): boolean {
@@ -41,6 +41,7 @@ export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
   const [manual, setManual] = useState("");
   const [manualMode, setManualMode] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
+  const [attemptCount, setAttemptCount] = useState(0);
 
   // Inicializa o scanner com Quagga2 para melhor precisão em códigos de barras 1D
   useEffect(() => {
@@ -48,6 +49,7 @@ export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
     let cancelled = false;
     votesRef.current = new Map();
     acceptedRef.current = false;
+    setAttemptCount(0);
 
     (async () => {
       try {
@@ -147,6 +149,7 @@ export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
 
           const next = (votesRef.current.get(code) ?? 0) + 1;
           votesRef.current.set(code, next);
+          setAttemptCount(next);
 
           if (next >= REQUIRED_VOTES) {
             acceptedRef.current = true;
@@ -172,14 +175,31 @@ export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
     const handleDetected = (code: string) => {
       // feedback tátil quando disponível
       try {
-        navigator.vibrate?.(60);
+        navigator.vibrate?.(100);
       } catch {
         /* no-op */
       }
+      
+      // Toca um som de sucesso se disponível
+      try {
+        const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        oscillator.frequency.value = 800;
+        oscillator.type = "sine";
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.1);
+      } catch {
+        /* no-op */
+      }
+
       onDetected(code);
       stop();
     };
-
 
     const stop = async () => {
       try {
@@ -224,7 +244,7 @@ export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
               {isScanning && (
                 <div className="absolute top-3 right-3 flex items-center gap-2 bg-green-500/80 text-white px-3 py-1 rounded-full text-xs font-medium">
                   <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-                  Escaneando
+                  Escaneando {attemptCount > 0 && `(${attemptCount}/3)`}
                 </div>
               )}
             </div>
@@ -269,6 +289,7 @@ export function BarcodeScanner({ open, onClose, onDetected, title }: Props) {
                 className="flex-1"
                 onClick={() => manual.trim() && onDetected(manual.trim())}
               >
+                <Zap className="h-4 w-4 mr-2" />
                 Confirmar
               </Button>
             </div>

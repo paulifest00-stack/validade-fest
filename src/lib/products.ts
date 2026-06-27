@@ -26,6 +26,8 @@ export function useProducts() {
       if (error) throw error;
       return data as Product[];
     },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
   });
 }
 
@@ -40,6 +42,8 @@ export function useCategories() {
       if (error) throw error;
       return data as Category[];
     },
+    staleTime: 1000 * 60 * 10, // 10 minutes (categories change less frequently)
+    gcTime: 1000 * 60 * 30, // 30 minutes
   });
 }
 

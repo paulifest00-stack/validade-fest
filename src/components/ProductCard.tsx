@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { motion } from "framer-motion";
 import { Pencil, Trash2, Package, Calendar, Barcode } from "lucide-react";
 import { Product, Category } from "@/lib/products";
@@ -10,7 +11,7 @@ type Props = {
   onDelete: () => void;
 };
 
-export function ProductCard({ product, category, onEdit, onDelete }: Props) {
+function ProductCardComponent({ product, category, onEdit, onDelete }: Props) {
   const status = getStatus(product.expiration_date);
   const meta = statusMeta[status];
 
@@ -30,7 +31,12 @@ export function ProductCard({ product, category, onEdit, onDelete }: Props) {
       <div className="flex gap-3 p-3 pl-4">
         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-surface-2">
           {product.photo_url ? (
-            <img src={product.photo_url} alt={product.name} className="h-full w-full object-cover" />
+            <img
+              src={product.photo_url}
+              alt={product.name}
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
           ) : (
             <div className="grid h-full w-full place-items-center text-muted-foreground">
               <Package className="h-7 w-7" />
@@ -99,3 +105,17 @@ export function ProductCard({ product, category, onEdit, onDelete }: Props) {
     </motion.div>
   );
 }
+
+// Memoize component to prevent unnecessary re-renders
+export const ProductCard = memo(ProductCardComponent, (prevProps, nextProps) => {
+  // Custom comparison: only re-render if product data or handlers change
+  return (
+    prevProps.product.id === nextProps.product.id &&
+    prevProps.product.updated_at === nextProps.product.updated_at &&
+    prevProps.category?.id === nextProps.category?.id &&
+    prevProps.onEdit === nextProps.onEdit &&
+    prevProps.onDelete === nextProps.onDelete
+  );
+});
+
+ProductCard.displayName = "ProductCard";
