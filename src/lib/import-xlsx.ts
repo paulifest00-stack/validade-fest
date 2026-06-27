@@ -152,7 +152,7 @@ export async function importProductsFromXLSX(
       const batchSize = 100;
       for (let i = 0; i < productsToInsert.length; i += batchSize) {
         const batch = productsToInsert.slice(i, i + batchSize);
-        const { error } = await supabase.from("products").insert(batch);
+        const { error } = await supabase.from("products").insert(batch as any);
 
         if (error) {
           result.errors.push(
