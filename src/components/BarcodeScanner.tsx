@@ -4,6 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Keyboard, X, AlertCircle } from "lucide-react";
 
+// Valida checksum de EAN-13, EAN-8 e UPC-A (12 dígitos).
+function isValidBarcodeChecksum(code: string): boolean {
+  if (!/^\d+$/.test(code)) return true; // não numérico (Code128/39): não validamos checksum
+  if (![8, 12, 13].includes(code.length)) return false;
+  const digits = code.split("").map(Number);
+  const check = digits.pop()!;
+  // EAN-13 e UPC-A (12): pesos alternados a partir da direita
+  // EAN-8: idem
+  let sum = 0;
+  const reversed = digits.reverse();
+  reversed.forEach((d, i) => {
+    sum += d * (i % 2 === 0 ? 3 : 1);
+  });
+  const calc = (10 - (sum % 10)) % 10;
+  return calc === check;
+}
+
 type Props = {
   open: boolean;
   onClose: () => void;
