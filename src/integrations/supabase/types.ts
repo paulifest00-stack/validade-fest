@@ -32,6 +32,33 @@ export type Database = {
         }
         Relationships: []
       }
+      product_catalog: {
+        Row: {
+          barcode: string
+          created_at: string
+          id: string
+          name: string
+          photo_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          barcode: string
+          created_at?: string
+          id?: string
+          name: string
+          photo_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          barcode?: string
+          created_at?: string
+          id?: string
+          name?: string
+          photo_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           barcode: string | null
