@@ -76,30 +76,6 @@ export type Database = {
           },
         ]
       }
-      product_catalog: {
-        Row: {
-          barcode: string
-          name: string
-          photo_url: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          barcode: string
-          name: string
-          photo_url?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          barcode?: string
-          name?: string
-          photo_url?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
     }
     Views: {
       [_ in never]: never
