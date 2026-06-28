@@ -1,8 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AlertTriangle,
+  Bell,
+  BellOff,
   CheckCircle2,
   Clock,
   ScanLine,
@@ -14,9 +16,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/ProductCard";
-import { ProductForm } from "@/components/ProductForm";
-import { BarcodeScanner } from "@/components/BarcodeScanner";
-import { CategoryManager } from "@/components/CategoryManager";
 import {
   Product,
   useCategories,
@@ -24,7 +23,23 @@ import {
   useProducts,
 } from "@/lib/products";
 import { getStatus, statusMeta } from "@/lib/expiration";
+import {
+  useExpirationNotifications,
+  useNotificationPermission,
+} from "@/lib/notifications";
 import { toast } from "sonner";
+
+// Lazy-loaded: heavy bottom sheets / scanner (quagga2 ~hundreds of KB)
+const BarcodeScanner = lazy(() =>
+  import("@/components/BarcodeScanner").then((m) => ({ default: m.BarcodeScanner })),
+);
+const ProductForm = lazy(() =>
+  import("@/components/ProductForm").then((m) => ({ default: m.ProductForm })),
+);
+const CategoryManager = lazy(() =>
+  import("@/components/CategoryManager").then((m) => ({ default: m.CategoryManager })),
+);
+
 const LOGO_URL = "/paulifest-logo.png";
 
 export const Route = createFileRoute("/")({
