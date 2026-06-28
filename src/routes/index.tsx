@@ -299,25 +299,32 @@ function Home() {
         </div>
       </div>
 
-      <BarcodeScanner
-        open={scanIntent !== null}
-        onClose={() => setScanIntent(null)}
-        onDetected={handleScanned}
-        title={scanIntent === "search" ? "Buscar por código" : "Escanear código de barras"}
-      />
-      <ProductForm
-        open={formOpen}
-        onClose={() => setFormOpen(false)}
-        initial={formInitial}
-        categories={categories.data ?? []}
-        defaultCategoryId={geralId}
-      />
-      <CategoryManager
-        open={catOpen}
-        onClose={() => setCatOpen(false)}
-        categories={categories.data ?? []}
-      />
-    </div>
+      <Suspense fallback={null}>
+        {scanIntent !== null && (
+          <BarcodeScanner
+            open={scanIntent !== null}
+            onClose={() => setScanIntent(null)}
+            onDetected={handleScanned}
+            title={scanIntent === "search" ? "Buscar por código" : "Escanear código de barras"}
+          />
+        )}
+        {formOpen && (
+          <ProductForm
+            open={formOpen}
+            onClose={() => setFormOpen(false)}
+            initial={formInitial}
+            categories={categories.data ?? []}
+            defaultCategoryId={geralId}
+          />
+        )}
+        {catOpen && (
+          <CategoryManager
+            open={catOpen}
+            onClose={() => setCatOpen(false)}
+            categories={categories.data ?? []}
+          />
+        )}
+      </Suspense>
   );
 }
 
